@@ -21,6 +21,16 @@ interface Prediction {
   scores: Record<string, number>;
   status: string;
   reason: string;
+  // OCR fields
+  awb_no?: string;
+  location?: string;
+  length_cm?: number;
+  breadth_cm?: number;
+  height_cm?: number;
+  dead_weight_kg?: number;
+  vol_weight_kg?: number;
+  chargeable_weight_kg?: number;
+  timestamp?: string;
 }
 
 type ResultMap = Record<number, Prediction>;
@@ -623,7 +633,7 @@ export default function SorterApp() {
                   <table>
                     <thead style={{ position: "sticky", top: 0, background: "#f8fafc" }}>
                       <tr>
-                        {["#", "URL", "Label", "Type", "L (cm)", "B (cm)", "H (cm)", "Dead Wt (kg)", "Vol Wt (kg)", "Chargeable (kg)"].map(h => (
+                        {["#", "URL", "Label", "Type", "AWB No", "Location", "L (cm)", "B (cm)", "H (cm)", "Dead Wt (kg)", "Vol Wt (kg)", "Chargeable (kg)"].map(h => (
                           <th key={h} style={{
                             padding: "10px 14px", fontSize: 11, fontWeight: 700,
                             color: "var(--text3)", letterSpacing: "0.08em",
@@ -635,12 +645,13 @@ export default function SorterApp() {
                     <tbody>
                       {rows.map((row, i) => {
                         const res = results[i];
-                        const L   = Number(row.length_cm) || undefined;
-                        const B   = Number(row.breadth_cm) || undefined;
-                        const H   = Number(row.height_cm) || undefined;
-                        const DW  = Number(row.dead_weight_kg) || undefined;
-                        const VW  = calcVolWeight(L, B, H);
-                        const CW  = (DW && VW) ? Math.max(DW, VW) : DW || VW;
+                        // Use OCR values from API response first, fall back to Excel columns
+                        const L   = res?.length_cm  || Number(row.length_cm)  || undefined;
+                        const B   = res?.breadth_cm || Number(row.breadth_cm) || undefined;
+                        const H   = res?.height_cm  || Number(row.height_cm)  || undefined;
+                        const DW  = res?.dead_weight_kg || Number(row.dead_weight_kg) || undefined;
+                        const VW  = res?.vol_weight_kg  || calcVolWeight(L, B, H);
+                        const CW  = res?.chargeable_weight_kg || ((DW && VW) ? Math.max(DW, VW) : DW || VW);
                         const url = String(row[urlCol] || "");
 
                         return (
@@ -656,6 +667,14 @@ export default function SorterApp() {
                             </td>
                             <td style={{ padding: "8px 14px", fontSize: 12, color: "var(--text2)" }}>
                               {res?.package_type || "—"}
+                            </td>
+                            {/* AWB No */}
+                            <td style={{ padding: "8px 14px", fontFamily: "var(--mono)", fontSize: 11, color: res?.awb_no ? "#2563eb" : "var(--text3)" }}>
+                              {res?.awb_no || "—"}
+                            </td>
+                            {/* Location */}
+                            <td style={{ padding: "8px 14px", fontSize: 12, color: res?.location ? "var(--text)" : "var(--text3)" }}>
+                              {res?.location || "—"}
                             </td>
                             {[L, B, H, DW].map((v, j) => (
                               <td key={j} style={{ padding: "8px 14px", fontFamily: "var(--mono)", fontSize: 13, color: v ? "var(--text)" : "var(--text3)", textAlign: "right" }}>
