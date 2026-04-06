@@ -24,6 +24,7 @@ interface Prediction {
 }
 
 type ResultMap = Record<number, Prediction>;
+type PartialPrediction = Partial<Prediction>;
 
 // ── Config ─────────────────────────────────────────────────────────
 const API = process.env.NEXT_PUBLIC_API_URL || "https://your-space.hf.space";
@@ -163,7 +164,7 @@ export default function SorterApp() {
   const exportXlsx = () => {
     // Sheet 1: Predictions
     const predData = rows.map((r, i) => {
-      const res = results[i] || {};
+      const res: PartialPrediction = results[i] || {};
       return {
         img_url:         String(r[urlCol] || ""),
         package_type:    res.package_type || "",
