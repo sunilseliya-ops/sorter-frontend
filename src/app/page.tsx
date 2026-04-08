@@ -35,7 +35,7 @@ type ResultMap = Record<number, Prediction>;
 
 // ── Config ─────────────────────────────────────────────────────────
 const API = process.env.NEXT_PUBLIC_API_URL || "https://your-space.hf.space";
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 25;
 
 // ── Label styling ──────────────────────────────────────────────────
 const LABELS: Record<string, { bg: string; color: string; border: string; icon: string }> = {
