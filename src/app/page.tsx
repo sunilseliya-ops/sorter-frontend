@@ -35,7 +35,7 @@ type ResultMap = Record<number, Prediction>;
 
 // ── Config ─────────────────────────────────────────────────────────
 const API = process.env.NEXT_PUBLIC_API_URL || "https://your-space.hf.space";
-const BATCH_SIZE = 25;
+const BATCH_SIZE = 10;
 
 // ── Label styling ──────────────────────────────────────────────────
 const LABELS: Record<string, { bg: string; color: string; border: string; icon: string }> = {
@@ -450,9 +450,9 @@ export default function SorterApp() {
                   <div style={{ fontSize: 48, marginBottom: 16 }}>📦</div>
                   <div style={{ fontSize: 18, fontWeight: 700, color: "var(--text2)", marginBottom: 8 }}>Upload an Excel file to begin</div>
                   <div style={{ fontSize: 13, color: "var(--text3)", lineHeight: 1.9 }}>
-                    Pipeline: BoxFlyer model → Shipment quality model<br />
-                    Classes: box · flyer · good · half_cut · hand_issue<br />
-                    Send to client = box + good + confidence ≥ 85%
+                    Pipeline: BoxFlyer model (info only) → Shipment quality model (decides)<br />
+                    Quality classes: good · half_cut · hand_issue · multi_parcel<br />
+                    ✓ SEND = good + confidence ≥ 85% &nbsp;·&nbsp; ✗ FLAG = everything else
                   </div>
                 </div>
               ) : (
@@ -641,7 +641,7 @@ export default function SorterApp() {
         )}
 
         <div style={{ marginTop: 24, textAlign: "center", fontSize: 11, color: "var(--text3)" }}>
-          Sorter v3 · Pipeline: BoxFlyer → Shipment Quality · Batches of {BATCH_SIZE}
+          Sorter v3 · Quality decides SEND · Box/Flyer is informational · Batches of {BATCH_SIZE}
         </div>
       </main>
 
