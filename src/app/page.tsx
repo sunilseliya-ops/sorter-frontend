@@ -195,7 +195,7 @@ export default function SorterApp() {
   // ── Export Excel ──────────────────────────────────────────────────
   const exportXlsx = () => {
     const predData = rows.map((r, i) => {
-      const res = results[i] || {};
+      const res: Partial<Prediction> = results[i] || {};
       return {
         img_url:         String(r[urlCol] || ""),
         parcel_type:     res.package_type || "",
